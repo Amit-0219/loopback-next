@@ -27,6 +27,11 @@ routes, you need to perform the following steps:
 3.  Call the constrained target model repository CRUD APIs in your controller
     methods.
 
+Right now, LoopBack collects the neccessary metadata and exposes the relation
+APIs for the `hasOne` relation, but does not guarantee referential integrity.
+This has to be set up by the user or DBA in the underlying database and an
+example is shown below on how to do it with MySQL.
+
 ## Defining a hasOne Relation
 
 This section describes how to define a `hasOne` relation at the model level
@@ -124,11 +129,17 @@ to enforce referential integrity and align with LoopBack's `hasOne` relation.
 
 1. Make `supplierId` property or column a foreign key which references the `id`
    from Supplier model's `id` property:
-   - `alter table <databaseName>.Account add foreign key (supplierId) REFERENCES <databaseName>.Supplier(id);`
+
+```sql
+ALTER TABLE <databaseName>.Account ADD FOREIGN KEY (supplierId) REFERENCES <databaseName>.Supplier(id);
+```
+
 2. Create a unique index for the same property `supplierId`, so that for each
    supplier instance, there is only one associated account instance.
 
-   - `alter table <databaseName>.Account add unique index supplierIndex (supplierId);`
+```sql
+   ALTER TABLE <databaseName>.Account ADD UNIQUE INDEX supplierIndex (supplierId);
+```
 
 Before making the following changes, please follow the steps outlined in
 [Database Migrations](Database-migrations.md) to create the database schemas
